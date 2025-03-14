@@ -9,14 +9,7 @@ use PHPUnit\Runner\DeprecationCollector\Collector;
 use App\Http\Resources\CancionResource;
 use App\Models\Letra;
 use App\Models\Linea;
-
-class CancioneController extends Controller
-{
-    public function index()
-    {
-        return CancionResource::collection(Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user'])->get());
-    }
-    /* public function lineas()
+/* public function lineas()
     {
         return $this->hasMany(Linea::class);
     }
@@ -40,6 +33,83 @@ class CancioneController extends Controller
     {
         return $this->hasMany(Letra::class);
     }*/
+
+class CancioneController extends Controller
+{
+    public function index()
+    {
+        try {
+
+            return CancionResource::collection(Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user'])->get());
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
+        }
+    }
+    public function show($id)
+    {
+        try {
+            $cancion = Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user'])->find($id);
+            if ($cancion == null) {
+                return response()->json(['message' => 'Canción no encontrada'], 404);
+            }
+            return CancionResource::make($cancion);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener la canción', 'error' => $e->getMessage()], 400);
+        }
+    }
+    public function update(Request $request, $id)
+    {
+        try {
+            $request = $request->all();
+            $cancion = Cancione::find($id);
+            $cancion->titulo = $request['titulo'];
+            $cancion->metrica = $request['metrica'];
+            $cancion->capo = $request['capo'];
+            $cancion->comentario = $request['comentario'];
+            $cancion->var = $request['var'];
+            $cancion->artista_id = $request['artista_id'];
+            $cancion->genero_id = $request['genero_id'];
+            $cancion->tonalidade_id = $request['tonalidade_id'];
+            $cancion->user_id = $request['user_id'];
+            $lineas = $cancion->lineas;
+            $letras = $cancion->letras;
+            foreach ($letras as $linea) {
+                $letra = new Letra();
+                $letra->texto = $linea['letra'];
+                $letra->n_linea = $linea['n_linea'];
+                $letra->id = $linea['id'];
+                $letra->posicion_en_compas = $linea['posicion_en_compas'];
+                $letra->variacion = $linea['variacion'] ?? '';
+                foreach ($lineas as $acorde) {
+                    $line = new Linea();
+                    $line->n_linea = $linea['n_linea'];
+                    $line->acorde_id = $acorde['id'];
+                    $line->posicion_en_compas = $acorde['posicion_en_compas'];
+                    $line->variacion = $acorde['variacion'] ?? '';
+                    $line->cancione_id = $cancion->id;
+                    $line->id = $acorde['id'];
+                    $line->update();
+                }
+                $letra->cancione_id = $cancion->id;
+                $letra->update();
+            }
+            $cancion->update();
+            return response()->json(['message' => 'Canción actualizada', 'cancion' => $cancion], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al actualizar la canción', 'error' => $e->getMessage()], 400);
+        }
+    }
+    public function delete($id)
+    {
+        try {
+            $cancion = Cancione::find($id);
+            $cancion->delete();
+            return response()->json(['message' => 'Canción eliminada', 'cancion' => $cancion], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al eliminar la canción', 'error' => $e->getMessage()], 400);
+        }
+    }
+
     public function store(Request $request)
     {
         try {
@@ -76,5 +146,29 @@ class CancioneController extends Controller
             return response()->json(['message' => 'Error al crear la canción', 'error' => $e->getMessage(), 'request' => $request], 400);
         }
         return response()->json(['message' => 'Canción creada', 'cancion' => $cancion], 200);
+    }
+
+    public function crearVariacion($id)
+    {
+        try {
+            $cancion = Cancione::find($id); // Encuentra la canción original
+            $variacion = new Cancione(); // Crea una nueva instancia de Cancione (con un nuevo ID)
+            // Asigna los valores para la variación
+            $variacion->titulo = $cancion->titulo; // Puedes copiar cualquier campo que desees
+            $variacion->metrica = $cancion->metrica;
+            $variacion->capo = $cancion->capo;
+            $variacion->comentario = $cancion->comentario;
+            $variacion->var = true; // Marca como una variación
+            $variacion->cancion_original_id = $cancion->id; // Relaciona con la canción original
+            $variacion->user_id = 2; // El ID del usuario que crea la variación
+            $variacion->genero_id = $cancion->genero_id;
+            $variacion->tonalidade_id = $cancion->tonalidade_id;
+            $variacion->artista_id = $cancion->artista_id;
+            $variacion->save(); // Guarda la variación en la base de datos, generando un nuevo ID
+        } catch (\Exception $e) {
+            $variacion->delete();
+            return response()->json(['message' => 'Error al crear la variación', 'error' => $e->getMessage(), "cancion" => $cancion], 400);
+        }
+        return response()->json(['message' => 'Variación creada', 'cancion' => $cancion], 200);
     }
 }

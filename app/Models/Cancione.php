@@ -41,7 +41,6 @@ class Cancione extends Model
     {
         return $this->belongsTo(Cancione::class, 'cancion_original_id');
     }
-
     // Relación con las variaciones de esta canción
     public function variaciones()
     {

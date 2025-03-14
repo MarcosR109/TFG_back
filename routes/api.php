@@ -12,7 +12,11 @@ Route::get('/user', function (Request $request) {
 
 Route::controller(CancioneController::class)->group(function () {
     Route::get('canciones', 'index');
+    Route::get('canciones/{id}', 'show');
+    Route::put('canciones/{id}', 'update');
+    Route::delete('canciones/{id}', 'delete');
     Route::post('canciones', 'store');
+    Route::get('canciones/var/{id}', 'crearVariacion');
 });
 
 Route::controller(LineaController::class)->group(function () {

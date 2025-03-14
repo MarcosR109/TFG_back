@@ -50,4 +50,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Cancione::class);
     }
+    public function favoritos()
+    {
+        return $this->hasMany(Cancione::class, 'favoritos');
+    }
 }
