@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('variacion')->default('');
             $table->unsignedBigInteger('n_linea');
             $table->unsignedBigInteger('posicion_en_compas');
+            $table->index('posicion_en_compas');
+            $table->index('n_linea');
         });
     }
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('n_linea');
             $table->text('texto')->nullable();
+            $table->index('n_linea');
         });
     }
 
