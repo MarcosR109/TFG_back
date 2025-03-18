@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Linea extends Model
 {
-    protected $fillable = ['n_linea', 'posicion_en_compas', 'variacion'];
+    protected $fillable = ['n_linea', 'posicion_en_compas', 'variacion', 'acorde'];
     public function cancione()
     {
         return $this->belongsTo(Cancione::class);

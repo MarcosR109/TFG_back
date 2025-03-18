@@ -61,7 +61,9 @@ class CancioneController extends Controller
     {
         try {
             $request = $request->all();
+
             $cancion = Cancione::find($id);
+            $cancion->update($request);
             $cancion->titulo = $request['titulo'];
             $cancion->metrica = $request['metrica'];
             $cancion->capo = $request['capo'];
@@ -71,29 +73,36 @@ class CancioneController extends Controller
             $cancion->genero_id = $request['genero_id'];
             $cancion->tonalidade_id = $request['tonalidade_id'];
             $cancion->user_id = $request['user_id'];
-            $lineas = $cancion->lineas;
-            $letras = $cancion->letras;
-            foreach ($letras as $linea) {
-                $letra = new Letra();
-                $letra->texto = $linea['letra'];
-                $letra->n_linea = $linea['n_linea'];
-                $letra->id = $linea['id'];
-                $letra->posicion_en_compas = $linea['posicion_en_compas'];
-                $letra->variacion = $linea['variacion'] ?? '';
-                foreach ($lineas as $acorde) {
-                    $line = new Linea();
-                    $line->n_linea = $linea['n_linea'];
-                    $line->acorde_id = $acorde['id'];
-                    $line->posicion_en_compas = $acorde['posicion_en_compas'];
-                    $line->variacion = $acorde['variacion'] ?? '';
-                    $line->cancione_id = $cancion->id;
-                    $line->id = $acorde['id'];
-                    $line->update();
+
+
+            try {
+                $letras = $cancion->letras;
+                $lineas = $cancion->lineas;
+                while ($letras->count() > count($request['lineas'])) {
+                    $cancion->letras->last()->delete();
                 }
-                $letra->cancione_id = $cancion->id;
-                $letra->update();
+                foreach ($request['lineas'] as $linea) {
+                    $line = $letras->where('n_linea', $linea['n_linea'])->first();
+                    if ($line) {
+                        $line->texto = $linea['letra'];
+                        $line->save();
+                    } else {
+                        $letra = new Letra();
+                        $letra->texto = $linea['letra'];
+                        $letra->n_linea = $linea['n_linea'];
+                        $letra->cancione_id = $cancion->id;
+                        $letra->save();
+                    }
+                    foreach ($linea['acordes'] as $acorde) {
+                        $acordeN = $lineas->where('posicion_en_compas', $acorde['posicion_en_compas'])->where('n_linea', $linea['n_linea'])->first();
+                        $acordeN->acorde_id = $acorde['id'];
+                        $acordeN->variacion = $acorde['variacion'] ?? '';
+                        $acordeN->save();
+                    }
+                }
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Error al actualizar la canción', 'error' => $e->getMessage()], 400);
             }
-            $cancion->update();
             return response()->json(['message' => 'Canción actualizada', 'cancion' => $cancion], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al actualizar la canción', 'error' => $e->getMessage()], 400);
