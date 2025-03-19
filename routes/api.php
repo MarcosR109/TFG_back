@@ -11,7 +11,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::controller(CancioneController::class)->group(function () {
-    Route::get('canciones', 'index');
+    Route::get('canciones', 'list');
     Route::get('canciones/{id}', 'show');
     Route::put('canciones/{id}', 'update');
     Route::delete('canciones/{id}', 'delete');

@@ -40,7 +40,16 @@ class CancioneController extends Controller
     {
         try {
 
-            return CancionResource::collection(Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user'])->get());
+            return CancionResource::collection(Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user',])->get());
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
+        }
+    }
+    public function list()
+    {
+        try {
+            $canciones = Cancione::with(['genero', 'tonalidade', 'user', 'artista'])->get();
+            return response()->json(['message' => 'Canciones obtenidas', 'canciones' => $canciones], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
         }
