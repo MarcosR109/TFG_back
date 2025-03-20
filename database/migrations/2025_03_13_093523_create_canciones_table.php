@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('comentario');
             $table->string('var');
             $table->boolean('publicada')->default(false);
+            $table->double('rating')->default(0);
         });
     }
 

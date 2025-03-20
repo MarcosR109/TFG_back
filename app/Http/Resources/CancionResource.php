@@ -37,7 +37,7 @@ class CancionResource extends JsonResource
                         ->where('n_linea', $letra->n_linea)
                         ->map(fn($linea) => [
                             'posicion_compas' => $linea->posicion_en_compas,
-                            'acorde_id'       => $linea->acorde_id,
+                            'id'       => $linea->acorde_id,
                             'variacion'       => $linea->variacion ?? '',
                         ])
                         ->toArray() // Convertir en array para evitar índices en la salida JSON

@@ -17,6 +17,7 @@ Route::controller(CancioneController::class)->group(function () {
     Route::delete('canciones/{id}', 'delete');
     Route::post('canciones', 'store');
     Route::get('canciones/var/{id}', 'crearVariacion');
+    Route::get('canciones/{nombre}/list', 'listarCancion');
 });
 
 Route::controller(LineaController::class)->group(function () {
