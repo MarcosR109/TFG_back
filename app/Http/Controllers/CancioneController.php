@@ -9,6 +9,7 @@ use PHPUnit\Runner\DeprecationCollector\Collector;
 use App\Http\Resources\CancionResource;
 use App\Models\Letra;
 use App\Models\Linea;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Redis;
 use PhpParser\Node\Expr\Cast\Array_;
@@ -56,7 +57,7 @@ class CancioneController extends Controller
             $canciones = Cancione::join('generos', 'canciones.genero_id', '=', 'generos.id')
                 ->join('tonalidades', 'canciones.tonalidade_id', '=', 'tonalidades.id')
                 ->join('artistas', 'canciones.artista_id', '=', 'artistas.id')
-                ->select('canciones.titulo', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista')
+                ->select('canciones.titulo', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista',)
                 ->distinct()
                 ->get();
             return response()->json(['message' => 'Canciones obtenidas', 'canciones' => $canciones], 200);
@@ -71,7 +72,7 @@ class CancioneController extends Controller
                 ->join('tonalidades', 'canciones.tonalidade_id', '=', 'tonalidades.id')
                 ->join('artistas', 'canciones.artista_id', '=', 'artistas.id')
                 ->where('canciones.titulo', $title)
-                ->select('canciones.id', 'canciones.titulo', 'canciones.tonalidade_id', 'canciones.user_id', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista')
+                ->select('canciones.id', 'canciones.titulo', 'canciones.tonalidade_id', 'canciones.user_id', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista', 'canciones.rating as rating')
                 ->get();
 
             return response()->json(['message' => 'Versiones obtenidas', 'canciones' => $canciones], 200);
@@ -190,6 +191,7 @@ class CancioneController extends Controller
         }
         return response()->json(['message' => 'Canción creada', 'cancion' => $cancion], 200);
     }
+
     public function storeIfExists(array $request, Cancione $cancion)
     {
         try {
@@ -253,5 +255,18 @@ class CancioneController extends Controller
             return response()->json(['message' => 'Error al crear la variación', 'error' => $e->getMessage(), "cancion" => $cancion], 400);
         }
         return response()->json(['message' => 'Variación creada', 'cancion' => $cancion], 200);
+    }
+
+    public function rate(Request $rating, $id)
+    {
+        try {
+            $rating = $rating->all();
+            $cancion = Cancione::find($id);
+            $cancion->rating = $cancion->rating + $rating['rate'] / 10;
+            $cancion->save();
+            return response()->json(['message' => 'Canción calificada', 'cancion' => $cancion], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Algo ha salido mal', 'error' => $e->getMessage()], 400);
+        }
     }
 }

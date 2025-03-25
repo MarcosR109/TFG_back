@@ -27,8 +27,10 @@ class CancionResource extends JsonResource
                 'email' => $this->user->email,
             ],
             'artista_id' => $this->artista_id,
+            'artista'    => $this->artista?->nombre,
             'genero'     => $this->genero?->nombre,
             'tonalidad'  => $this->tonalidade?->nombre,
+            'rating'    => $this->rating,
             'lineas' => $this->letras->map(fn($letra) => [
                 'n_linea' => $letra->n_linea,
                 'texto'   => $letra->texto,

@@ -52,6 +52,6 @@ class User extends Authenticatable
     }
     public function favoritos()
     {
-        return $this->hasMany(Cancione::class, 'favoritos');
+        return $this->belongsToMany(Cancione::class, 'favoritos');
     }
 }
