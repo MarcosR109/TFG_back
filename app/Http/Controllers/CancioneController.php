@@ -65,6 +65,7 @@ class CancioneController extends Controller
             return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
         }
     }
+
     public function listarCancion($title)
     {
         try {
@@ -167,11 +168,12 @@ class CancioneController extends Controller
             $cancion->artista_id     = $request['artista_id'];
             $cancion->genero_id     = $request['genero_id'];
             $cancion->tonalidade_id = $request['tonalidade_id'];
-            $cancion->user_id       = $request['user_id'];
+            //$cancion->user_id       = $request['user_id'];
+            $cancion->user_id = 1;
             $cancion->save();
             foreach ($request['lineas'] as $linea) {
                 $letra = new Letra();
-                $letra->texto = $linea['letra'];
+                $letra->texto = $linea['texto'];
                 $letra->n_linea = $linea['n_linea'];
                 foreach ($linea['acordes'] as $acorde) {
                     $line = new Linea();
@@ -187,9 +189,9 @@ class CancioneController extends Controller
             }
         } catch (\Exception $e) {
             $cancion->delete();
-            return response()->json(['message' => 'Error al crear la canción', 'error' => $e->getMessage(), 'request' => $request], 400);
+            return response()->json(['message' => 'Error al crear la canción', 'error' => $e->getMessage(), 'request' => $request, 'cancion' => $cancion], 400);
         }
-        return response()->json(['message' => 'Canción creada', 'cancion' => $cancion], 200);
+        return response()->json(['message' => 'Canción creada', 'cancion' => $cancion, 'metodo' => 'store'], 200);
     }
 
     public function storeIfExists(array $request, Cancione $cancion)
@@ -228,7 +230,7 @@ class CancioneController extends Controller
             $can->delete();
             $letra->delete();
             $line->save();
-            return response()->json(['message' => 'Error al crear la canción', 'error' => $e->getMessage(), 'request' => $request], 400);
+            return response()->json(['message' => 'Error al crear la variación', 'error' => $e->getMessage(), 'request' => $request], 400);
         }
     }
 

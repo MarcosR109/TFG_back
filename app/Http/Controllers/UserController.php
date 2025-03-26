@@ -50,9 +50,11 @@ class UserController extends Controller
                 ->join('tonalidades', 'canciones.tonalidade_id', '=', 'tonalidades.id')
                 ->join('artistas', 'canciones.artista_id', '=', 'artistas.id')
                 ->join('favoritos', 'canciones.id', '=', 'favoritos.cancione_id')
-                ->select('canciones.id', 'canciones.titulo', 'canciones.tonalidade_id', 'canciones.user_id', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista', 'canciones.rating as rating')
+                ->join('users', 'favoritos.user_id', '=', 'users.id')
+                ->where('users.id', $user->id)
+                ->select('canciones.id', 'canciones.titulo', 'tonalidades.nombre', 'canciones.user_id', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista', 'canciones.rating as rating')
                 ->get();
-            return response()->json(['message' => 'Favoritos obtenidos', 'canciones' => $favoritos], 200);
+            return response()->json(['message' => 'Favoritos obtenidos', 'canciones' => $canciones], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener los favoritos', 'error' => $e->getMessage()], 400);
         }
