@@ -41,6 +41,7 @@ class CancionResource extends JsonResource
                             'posicion_compas' => $linea->posicion_en_compas,
                             'id'       => $linea->acorde_id,
                             'variacion'       => $linea->variacion ?? '',
+                            'acorde' => $linea->acordes->where('id', $linea->acorde_id)->pluck('nombre')[0] ?? ''
                         ])
                         ->toArray() // Convertir en array para evitar índices en la salida JSON
                 )

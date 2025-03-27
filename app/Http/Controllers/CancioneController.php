@@ -90,7 +90,7 @@ class CancioneController extends Controller
             }
             return response()->json(['cancion' => CancionResource::make($cancion)], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error al obtener la canción', 'error' => $e->getMessage()], 400);
+            return response()->json(['message' => 'Error al obtener la canción', 'error' => $e->getMessage(), 'debug' => 'show'], 400);
         }
     }
     public function update(Request $request, $id)

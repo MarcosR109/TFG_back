@@ -12,4 +12,8 @@ class Acorde extends Model
     {
         return $this->belongsTo(Tonalidade::class);
     }
+    public function lineas()
+    {
+        return $this->hasMany(Linea::class, 'acorde_id'); // La clave foránea en la tabla "lineas"
+    }
 }

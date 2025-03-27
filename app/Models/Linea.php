@@ -13,6 +13,6 @@ class Linea extends Model
     }
     public function acordes()
     {
-        return $this->hasMany(Acorde::class);
+        return $this->belongsTo(Acorde::class, 'acorde_id');
     }
 }
