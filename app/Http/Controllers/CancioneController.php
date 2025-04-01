@@ -7,6 +7,7 @@ use App\Models\Cancione;
 use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Runner\DeprecationCollector\Collector;
 use App\Http\Resources\CancionResource;
+use App\Models\Artista;
 use App\Models\Letra;
 use App\Models\Linea;
 use App\Models\User;
@@ -269,6 +270,19 @@ class CancioneController extends Controller
             return response()->json(['message' => 'Canción calificada', 'cancion' => $cancion], 200);
         } catch (Exception $e) {
             return response()->json(['message' => 'Algo ha salido mal', 'error' => $e->getMessage()], 400);
+        }
+    }
+    public function searchArtista($artist)
+    {
+        try {
+            $artista = Artista::where('nombre', $artist)->first();
+            if ($artista == null) {
+                return response()->json(['message' => 'Artista no encontrado'], 404);
+            }
+            $canciones = Cancione::where('artista_id', $artista->id)->with('artista', 'genero')->get();
+            return response()->json(['message' => 'Canciones obtenidas', 'canciones' => $canciones, 'debug' => $artist], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
         }
     }
 }

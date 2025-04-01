@@ -4,7 +4,4 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class ArtistaController extends Controller
-{
-    //
-}
+class ArtistaController extends Controller {}

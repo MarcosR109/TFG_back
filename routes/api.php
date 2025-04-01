@@ -20,6 +20,8 @@ Route::controller(CancioneController::class)->group(function () {
     Route::get('canciones/var/{id}', 'crearVariacion');
     Route::get('canciones/{nombre}/list', 'listarCancion');
     Route::post('canciones/{id}/rate', 'rate');
+    Route::get('canciones/filtrar', 'filtrar');
+    Route::get('canciones/{artist}/lista', 'searchArtista');
 });
 
 Route::controller(UserController::class)->group(function () {
