@@ -285,4 +285,41 @@ class CancioneController extends Controller
             return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
         }
     }
+    public function getRevisables(){
+        try{
+
+            $canciones = Cancione::where('publicada', '==','0')->with('artista','user','genero')->get();
+            if ($canciones == null) {
+                return response()->json(['message' => 'No hay canciones por revisar'], 404);
+            }
+            return response()->json(['message' => 'Canciones por revisar', 'canciones' => $canciones], 200);
+        }
+        catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
+        }
+    }
+    public function revisar($id){
+        try{
+            $cancion = Cancione::findOrFail($id);
+            $cancion->publicada = 1; // Cambia el estado a publicado
+            $cancion->save();
+            return response()->json(['message' => 'Canción revisada y publicada', 'cancion' => $cancion], 200);
+        }
+        catch (\Exception $e) {
+            return response()->json(['message' => 'Error al revisar la canción', 'error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function getNrevisables(){
+        try{
+            $canciones = Cancione::where('publicada', '==','0')->with('artista','user','genero')->get();
+            if ($canciones == null) {
+                return response()->json(['message' => 'No hay canciones por revisar'], 404);
+            }
+            return response()->json(['count' => $canciones->count()], 200);
+        }
+        catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
+        }
+    }
 }

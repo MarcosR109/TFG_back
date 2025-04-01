@@ -22,6 +22,9 @@ Route::controller(CancioneController::class)->group(function () {
     Route::post('canciones/{id}/rate', 'rate');
     Route::get('canciones/filtrar', 'filtrar');
     Route::get('canciones/{artist}/lista', 'searchArtista');
+    Route::get('canciones/lista/revisar', 'getRevisables');
+    Route::put('canciones/{id}/revisar', 'revisar');
+    Route::get('badge','getNrevisables');
 });
 
 Route::controller(UserController::class)->group(function () {
