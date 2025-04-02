@@ -59,4 +59,54 @@ class UserController extends Controller
             return response()->json(['message' => 'Error al obtener los favoritos', 'error' => $e->getMessage()], 400);
         }
     }
+    public function anadirGuardados($id)
+    {
+        try {
+            $cancion = Cancione::findOrFail($id);
+            $user = User::findOrFail(1);
+            $user->guardados()->attach($cancion);
+            return response()->json(['message' => 'Canción añadida a guardados'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'No se ha podido añadir a guardados', 'debug' => $e->getMessage()], 404);
+        }
+    }
+    public function verificarGuardados($id)
+    {
+        try {
+            $user = User::findOrFail(1); // Aquí obtienes al usuario. En producción, sería el usuario autenticado.
+            $guardado = $user->guardados()->where('cancione_id', $id)->exists();
+            return response()->json(['guardado' => $guardado], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al verificar guardados', 'debug' => $e->getMessage()], 500);
+        }
+    }
+    public function quitarGuardados($id)
+    {
+        try {
+            $cancion = Cancione::findOrFail($id);
+            $user = User::findOrFail(1);
+            $user->guardados()->detach($cancion);
+            return response()->json(['message' => 'Canción eliminada de guardados'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'No se ha podido eliminar de guardados', 'debug' => $e->getMessage()], 404);
+        }
+    }
+    public function listarGuardados()
+    {
+        try {
+            $user = User::find(1);
+            $guardados = $user->guardados;
+            $canciones = Cancione::join('generos', 'canciones.genero_id', '=', 'generos.id')
+                ->join('tonalidades', 'canciones.tonalidade_id', '=', 'tonalidades.id')
+                ->join('artistas', 'canciones.artista_id', '=', 'artistas.id')
+                ->join('guardados', 'canciones.id', '=', 'guardados.cancione_id')
+                ->join('users', 'guardados.user_id', '=', 'users.id')
+                ->where('users.id', $user->id)
+                ->select('canciones.id', 'canciones.titulo', 'tonalidades.nombre', 'canciones.user_id', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista', 'canciones.rating as rating')
+                ->get();
+            return response()->json(['message' => 'Guardados obtenidos', 'canciones' => $canciones], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener los guardados', 'error' => $e->getMessage()], 400);
+        }
+    }
 }

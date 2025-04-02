@@ -38,7 +38,7 @@ class CancionResource extends JsonResource
                     $this->lineas
                         ->where('n_linea', $letra->n_linea)
                         ->map(fn($linea) => [
-                            'posicion_compas' => $linea->posicion_en_compas,
+                            'posicion_en_compas' => $linea->posicion_en_compas,
                             'id'       => $linea->acorde_id,
                             'variacion'       => $linea->variacion ?? '',
                             'acorde' => $linea->acordes->where('id', $linea->acorde_id)->pluck('nombre')[0] ?? ''

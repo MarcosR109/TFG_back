@@ -54,4 +54,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Cancione::class, 'favoritos');
     }
+    public function guardados()
+    {
+        return $this->belongsToMany(Cancione::class, 'guardados');
+    }
 }

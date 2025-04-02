@@ -46,4 +46,8 @@ class Cancione extends Model
     {
         return $this->hasMany(Cancione::class, 'cancion_original_id');
     }
+    public function guardados()
+    {
+        return $this->belongsToMany(User::class, 'guardados');
+    }
 }

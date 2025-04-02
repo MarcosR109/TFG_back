@@ -24,7 +24,8 @@ Route::controller(CancioneController::class)->group(function () {
     Route::get('canciones/{artist}/lista', 'searchArtista');
     Route::get('canciones/lista/revisar', 'getRevisables');
     Route::put('canciones/{id}/revisar', 'revisar');
-    Route::get('badge','getNrevisables');
+    Route::put('canciones/{id}/editar', 'edit');
+    Route::get('badge', 'getNrevisables');
 });
 
 Route::controller(UserController::class)->group(function () {
@@ -32,6 +33,10 @@ Route::controller(UserController::class)->group(function () {
     Route::delete('users/{id}/favoritos', 'quitarFavoritos');
     Route::get('users/{id}/favoritos', 'verificarFavorito');
     Route::get('users/favoritos/list', 'listarFavoritos');
+    Route::get('users/guardados/list', 'listarGuardados');
+    Route::put('users/{id}/guardados', 'anadirGuardados');
+    Route::delete('users/{id}/guardados', 'quitarGuardados');
+    Route::get('users/{id}/guardados', 'verificarGuardados');
 });
 
 Route::controller(LineaController::class)->group(function () {
