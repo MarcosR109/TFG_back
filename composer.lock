@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "85c1d2065f70e38b0d6bf66559fb13c5",
+    "content-hash": "12e9bff088f70a643b46dd0650598042",
     "packages": [
         {
             "name": "brick/math",
@@ -5577,6 +5577,69 @@
                 }
             ],
             "time": "2025-01-17T11:39:41+00:00"
+        },
+        {
+            "name": "tahajaiti/jwt",
+            "version": "1.1.23",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tahajaiti/jwt.git",
+                "reference": "5abaa32280ed35b64dfb6e7f83720f013ad6f85a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tahajaiti/jwt/zipball/5abaa32280ed35b64dfb6e7f83720f013ad6f85a",
+                "reference": "5abaa32280ed35b64dfb6e7f83720f013ad6f85a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/auth": "^10|^11|^12",
+                "illuminate/contracts": "^10|^11|^12",
+                "illuminate/http": "^10|^11|^12",
+                "illuminate/support": "^10|^11|^12",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "illuminate/console": "^12.4",
+                "illuminate/contracts": "^12.4",
+                "illuminate/http": "^12.4",
+                "illuminate/routing": "*",
+                "illuminate/support": "^12.4",
+                "laravel/framework": "^12.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "JWT": "Kyojin\\JWT\\Facades\\JWT"
+                    },
+                    "providers": [
+                        "Kyojin\\JWT\\Providers\\JWTServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kyojin\\JWT\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "taha jaiti",
+                    "email": "kyojin.rar@gmail.com"
+                }
+            ],
+            "description": "A laravel package for JWT Authentication",
+            "support": {
+                "issues": "https://github.com/tahajaiti/jwt/issues",
+                "source": "https://github.com/tahajaiti/jwt/tree/1.1.23"
+            },
+            "time": "2025-04-02T15:24:34+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cancione;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -44,21 +45,35 @@ class UserController extends Controller
     public function listarFavoritos()
     {
         try {
-            $user = User::find(1);
+            $user = Auth::user();
             $favoritos = $user->favoritos;
             $canciones = Cancione::join('generos', 'canciones.genero_id', '=', 'generos.id')
                 ->join('tonalidades', 'canciones.tonalidade_id', '=', 'tonalidades.id')
                 ->join('artistas', 'canciones.artista_id', '=', 'artistas.id')
-                ->join('favoritos', 'canciones.id', '=', 'favoritos.cancione_id')
-                ->join('users', 'favoritos.user_id', '=', 'users.id')
-                ->where('users.id', $user->id)
-                ->select('canciones.id', 'canciones.titulo', 'tonalidades.nombre', 'canciones.user_id', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista', 'canciones.rating as rating')
+                ->leftJoin('favoritos', function ($join) use ($user) {
+                    $join->on('canciones.id', '=', 'favoritos.cancione_id')
+                        ->where('favoritos.user_id', '=', $user->id);
+                })
+                ->where(function ($query) use ($user) {
+                    $query->where('canciones.user_id', $user->id) // Dueño de la canción
+                        ->orWhereNotNull('favoritos.id'); // Está en favoritos del usuario
+                })
+                ->select(
+                    'canciones.id',
+                    'canciones.titulo',
+                    'tonalidades.nombre as tonalidad',
+                    'canciones.user_id',
+                    'generos.nombre as genero',
+                    'artistas.nombre as artista',
+                    'canciones.rating as rating'
+                )
                 ->get();
             return response()->json(['message' => 'Favoritos obtenidos', 'canciones' => $canciones], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener los favoritos', 'error' => $e->getMessage()], 400);
         }
     }
+
     public function anadirGuardados($id)
     {
         try {

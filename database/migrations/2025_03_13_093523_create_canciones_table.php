@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('var');
             $table->boolean('publicada')->default(false);
             $table->double('rating')->default(0);
+            $table->boolean('privada')->default(false);
         });
     }
 

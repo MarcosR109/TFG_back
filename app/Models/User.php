@@ -6,12 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Kyojin\JWT\Traits\HasJWT;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
+    use HasJWT;
     /**
      * The attributes that are mass assignable.
      *
@@ -31,8 +32,15 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'role_id',
     ];
-
+    /* public function payload(): array
+    {
+        return [
+            ...parent::payload(), // initializing the parent payload
+            'role_id' => $this->role, // adding your custom values
+        ];
+    }*/
     /**
      * Get the attributes that should be cast.
      *
