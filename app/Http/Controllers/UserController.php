@@ -106,6 +106,15 @@ class UserController extends Controller
             return response()->json(['error' => 'No se ha podido eliminar de guardados', 'debug' => $e->getMessage()], 404);
         }
     }
+    public function listarUsuarios()
+    {
+        try {
+            $usuarios = User::all();
+            return response()->json(['message' => 'Usuarios obtenidos', 'usuarios' => $usuarios], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener los usuarios', 'error' => $e->getMessage()], 400);
+        }
+    }
     public function listarGuardados()
     {
         try {

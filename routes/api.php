@@ -18,7 +18,6 @@ Route::get('/user', function (Request $request) {
 Route::middleware('jwt')->group(function () {
     Route::controller(CancioneController::class)->group(function () {
         Route::get('canciones', 'list');
-
         Route::get('canciones/lista/revisar', 'getRevisables');
         Route::put('canciones/{id}/revisar', 'revisar');
         Route::put('canciones/{id}/editar', 'edit');
@@ -39,6 +38,7 @@ Route::middleware('jwt')->group(function () {
         Route::put('users/{id}/guardados', 'anadirGuardados');
         Route::delete('users/{id}/guardados', 'quitarGuardados');
         Route::get('users/{id}/guardados', 'verificarGuardados');
+        Route::get('admin/usuarios', 'listarUsuarios');
     });
 });
 Route::controller(CancioneController::class)->group(function () {
@@ -46,6 +46,7 @@ Route::controller(CancioneController::class)->group(function () {
     Route::get('canciones/{id}', 'show');
     Route::get('canciones/{nombre}/list', 'listarCancion');
     Route::get('canciones/{artist}/lista', 'searchArtista');
+    Route::get('canciones/lista/admin', 'listaAdmin');
 });
 
 Route::controller(LineaController::class)->group(function () {

@@ -277,7 +277,6 @@ class CancioneController extends Controller
             $cancion->artista_id = $request->input("artista_id");
             $cancion->genero_id = $request->input("genero_id");
             $cancion->tonalidade_id = $request->input("tonalidade_id");
-            $cancion->publicada = 1;
             $cancion->lineas()->delete();
             $cancion->letras()->delete();
             $cancion->save();
@@ -341,15 +340,45 @@ class CancioneController extends Controller
             return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
         }
     }
-    public function revisar($id)
+    public function revisar($id, Request $request)
     {
         try {
-            $cancion = Cancione::findOrFail($id);
-            $cancion->publicada = 1; // Cambia el estado a publicado
+            $cancion = Cancione::find($id);
+            if ($cancion == null) {
+                return response()->json(['message' => 'Canción no encontrada'], 404);
+            }
+            $cancion->user_id = 1;
+            $cancion->titulo = $request->input("titulo");
+            $cancion->metrica = $request->input("metrica");
+            $cancion->capo = $request->input("capo");
+            $cancion->comentario = $request->input("comentario");
+            $cancion->var = $request->input("var");
+            $cancion->artista_id = $request->input("artista_id");
+            $cancion->genero_id = $request->input("genero_id");
+            $cancion->tonalidade_id = $request->input("tonalidade_id");
+            $cancion->publicada = 1;
+            $cancion->lineas()->delete();
+            $cancion->letras()->delete();
             $cancion->save();
-            return response()->json(['message' => 'Canción revisada y publicada', 'cancion' => $cancion], 200);
+            foreach ($request['lineas'] as $linea) {
+                $letra = new Letra();
+                $letra->texto = $linea['texto'];
+                $letra->n_linea = $linea['n_linea'];
+                foreach ($linea['acordes'] as $acorde) {
+                    $line = new Linea();
+                    $line->n_linea = $linea['n_linea'];
+                    $line->acorde_id = $acorde['id'];
+                    $line->posicion_en_compas = $acorde['posicion_en_compas'];
+                    $line->variacion = $acorde['variacion'] ?? '';
+                    $line->cancione_id = $cancion->id;
+                    $line->save();
+                }
+                $letra->cancione_id = $cancion->id;
+                $letra->save();
+            }
+            return response()->json(['cancion' => CancionResource::make($cancion)], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error al revisar la canción', 'error' => $e->getMessage()], 400);
+            return response()->json(['message' => 'Error al obtener la canción', 'error' => $e->getMessage()], 400);
         }
     }
 
@@ -361,6 +390,18 @@ class CancioneController extends Controller
                 return response()->json(['message' => 'No hay canciones por revisar'], 404);
             }
             return response()->json(['count' => $canciones->count()], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
+        }
+    }
+    public function listaAdmin()
+    {
+        try {
+            $canciones = Cancione::with('artista', 'user', 'genero')->get();
+            if ($canciones == null) {
+                return response()->json(['message' => 'No hay canciones por revisar'], 404);
+            }
+            return response()->json(['message' => 'Canciones por revisar', 'canciones' => $canciones], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
         }
