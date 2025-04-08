@@ -15,6 +15,9 @@ use Exception;
 use Illuminate\Support\Facades\Redis;
 use PhpParser\Node\Expr\Cast\Array_;
 use PhpParser\Node\Stmt\Return_;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /* public function lineas()
     {
@@ -206,14 +209,15 @@ class CancioneController extends Controller
             $can->comentario = $request['comentario'] ?? '';
             $can->var = true; // Marca como una variación
             $can->cancion_original_id = $cancion->id; // Relaciona con la canción original
-            $can->user_id = 2; // El ID del usuario que crea la variación
-            $can->genero_id = $cancion->genero_id;
+            $can->user_id = Auth::user()->id; // El ID del usuario que crea la variación
+            $can->genero_id = $request['genero_id'];
+            $can->privada = $request['privada'] ?? 0;
             $can->tonalidade_id = $request['tonalidade_id'];
             $can->artista_id = $cancion->artista_id;
             $can->save();
             foreach ($request['lineas'] as $linea) {
                 $letra = new Letra();
-                $letra->texto = $linea['letra'];
+                $letra->texto = $linea['texto'];
                 $letra->n_linea = $linea['n_linea'];
                 foreach ($linea['acordes'] as $acorde) {
                     $line = new Linea();
@@ -229,9 +233,6 @@ class CancioneController extends Controller
             }
             return response()->json(['message' => 'Canción/Var creada', 'cancion' => $can], 200);
         } catch (Exception $e) {
-            $can->delete();
-            $letra->delete();
-            $line->save();
             return response()->json(['message' => 'Error al crear la variación', 'error' => $e->getMessage(), 'request' => $request], 400);
         }
     }
@@ -405,5 +406,34 @@ class CancioneController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
         }
+    }
+    public function getRecomendacionArmonica()
+    {
+        $previo = request()->input('previo');
+        $actual = request()->input('actual');
+        $limit = request()->input('limit', 3);
+
+        $validator = Validator::make(request()->all(), [
+            'actual' => 'required|integer|min:1|max:7',
+            'limit' => 'sometimes|integer|min:1|max:10',
+            'previo' => 'sometimes|nullable|integer|min:1|max:7'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+        $recomendaciones = DB::select(
+            'CALL sp_obtener_recomendaciones_armonicas(?, ?, ?)',
+            [$previo, $actual, $limit]
+        );
+
+        return response()->json([
+            'recomendaciones' => $recomendaciones,
+            'parametros_usados' => [
+                'previo' => $previo,
+                'actual' => $actual,
+                'limit' => $limit
+            ]
+        ], 200);
     }
 }

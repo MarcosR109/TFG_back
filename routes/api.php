@@ -28,6 +28,7 @@ Route::middleware('jwt')->group(function () {
         Route::post('canciones/{id}/rate', 'rate');
         Route::get('canciones/filtrar', 'filtrar');
         Route::get('canciones/var/{id}', 'crearVariacion');
+        Route::get('canciones/recomendacion', 'getRecomendacionArmonica');
     });
     Route::controller(UserController::class)->group(function () {
         Route::post('users/{id}/favoritos', 'anadirFavoritos');
@@ -39,6 +40,8 @@ Route::middleware('jwt')->group(function () {
         Route::delete('users/{id}/guardados', 'quitarGuardados');
         Route::get('users/{id}/guardados', 'verificarGuardados');
         Route::get('admin/usuarios', 'listarUsuarios');
+        Route::put('admin/usuarios/{id}', 'cambiarRol');
+        Route::delete('admin/usuarios/{id}', 'eliminarUsuario');
     });
 });
 Route::controller(CancioneController::class)->group(function () {

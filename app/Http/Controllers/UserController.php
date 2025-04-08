@@ -133,4 +133,26 @@ class UserController extends Controller
             return response()->json(['message' => 'Error al obtener los guardados', 'error' => $e->getMessage()], 400);
         }
     }
+    public function cambiarRol($id, Request $request)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $nuevoRol = $request->input('rol');
+            $user->role_id = $nuevoRol;
+            $user->save();
+            return response()->json(['message' => 'Rol cambiado correctamente', 'usuario' => $user], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al cambiar el rol', 'error' => $e->getMessage()], 400);
+        }
+    }
+    public function eliminarUsuario($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+            return response()->json(['message' => 'Usuario eliminado correctamente'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al eliminar el usuario', 'error' => $e->getMessage()], 400);
+        }
+    }
 }
