@@ -12,8 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('DELIMITER //
-DROP PROCEDURE IF EXISTS sp_obtener_recomendaciones_armonicas//
+        DB::unprepared('
 CREATE PROCEDURE sp_obtener_recomendaciones_armonicas(
     IN p_previo INT,  -- NULLABLE
     IN p_actual INT,  -- REQUIRED
@@ -54,7 +53,7 @@ BEGIN
           AND a1.grado != 8 AND a2.grado != 8 AND a3.grado != 8
           AND a1.grado = p_previo
           AND a2.grado = p_actual
-          AND a3.grado != p_actual
+          AND a3.grado != p_actual  -- Esta línea asegura que no sea el acorde actual
         GROUP BY a3.grado;
         
         -- Verificar si tenemos suficientes resultados
@@ -82,7 +81,7 @@ BEGIN
               AND a1.grado != 8 AND a2.grado != 8 AND a3.grado != 8
               AND a1.grado = p_previo
               AND a2.grado = p_actual
-              AND a3.grado != p_actual
+              AND a3.grado != p_actual  -- Excluir el acorde actual
               AND l3.posicion_en_compas > 0  -- No el primer acorde de la línea
             GROUP BY a3.grado;
         END IF;
@@ -122,7 +121,7 @@ BEGIN
           AND a1.grado != 8 AND a2.grado != 8
           AND a1.grado = p_actual
           AND l2.posicion_en_compas > l1.posicion_en_compas
-          AND a2.grado != p_actual
+          AND a2.grado != p_actual  -- Excluir el acorde actual
         GROUP BY a2.grado;
         
         -- Verificar si tenemos suficientes resultados
@@ -143,7 +142,7 @@ BEGIN
             WHERE a1.id != 170
               AND a1.grado != 8
               AND l1.n_linea > 1
-              AND a1.grado != p_actual
+              AND a1.grado != p_actual  -- Excluir el acorde actual
             GROUP BY a1.grado;
         END IF;
         
@@ -155,8 +154,7 @@ BEGIN
         
         DROP TEMPORARY TABLE IF EXISTS temp_inicio;
     END IF;
-END//
-DELIMITER ;
+END
 ');
     }
 
@@ -165,6 +163,7 @@ DELIMITER ;
      */
     public function down(): void
     {
-        Schema::dropIfExists('recomendacion_procedure');
+        DB::statement('
+DROP PROCEDURE IF EXISTS sp_obtener_recomendaciones_armonicas');
     }
 };

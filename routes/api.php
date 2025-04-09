@@ -35,7 +35,6 @@ Route::middleware('jwt')->group(function () {
         Route::delete('users/{id}/favoritos', 'quitarFavoritos');
         Route::get('users/{id}/favoritos', 'verificarFavorito');
         Route::get('users/favoritos/list', 'listarFavoritos');
-        Route::get('users/guardados/list', 'listarGuardados');
         Route::put('users/{id}/guardados', 'anadirGuardados');
         Route::delete('users/{id}/guardados', 'quitarGuardados');
         Route::get('users/{id}/guardados', 'verificarGuardados');
@@ -50,6 +49,7 @@ Route::controller(CancioneController::class)->group(function () {
     Route::get('canciones/{nombre}/list', 'listarCancion');
     Route::get('canciones/{artist}/lista', 'searchArtista');
     Route::get('canciones/lista/admin', 'listaAdmin');
+    Route::get('landing','getLandingData');
 });
 
 Route::controller(LineaController::class)->group(function () {

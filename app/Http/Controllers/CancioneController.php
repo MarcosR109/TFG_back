@@ -61,7 +61,7 @@ class CancioneController extends Controller
             $canciones = Cancione::join('generos', 'canciones.genero_id', '=', 'generos.id')
                 ->join('tonalidades', 'canciones.tonalidade_id', '=', 'tonalidades.id')
                 ->join('artistas', 'canciones.artista_id', '=', 'artistas.id')
-                ->select('canciones.titulo', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista',)->where('canciones.privada', 0)
+                ->select('canciones.titulo', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista', )->where('canciones.privada', 0)
                 ->distinct()
                 ->get();
             return response()->json(['message' => 'Canciones obtenidas', 'canciones' => $canciones], 200);
@@ -90,7 +90,7 @@ class CancioneController extends Controller
         try {
             $cancion = Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user'])->where('privada', 0)->find($id);
             if ($cancion == null) {
-                return response()->json(['message' => 'Canción no encontrada'], 404);
+                return response()->json(['message' => 'Canción no encontrada', 'DEBUG' => 'show'], 404);
             }
             return response()->json(['cancion' => CancionResource::make($cancion)], 200);
         } catch (\Exception $e) {
@@ -164,17 +164,17 @@ class CancioneController extends Controller
             if ($cancionExists = Cancione::where('titulo', $request['titulo'])->where('artista_id', $request['artista_id'])->where('privada', 0)->first()) {
                 return $this->storeIfExists($request, $cancionExists);
             }
-            $cancion->titulo        = $request['titulo'];
-            $cancion->metrica       = $request['metrica'];
-            $cancion->capo           = $request['capo'];
-            $cancion->comentario    = $request['comentario'];
-            $cancion->var           = $request['var'];
-            $cancion->artista_id     = $request['artista_id'];
-            $cancion->genero_id     = $request['genero_id'];
+            $cancion->titulo = $request['titulo'];
+            $cancion->metrica = $request['metrica'];
+            $cancion->capo = $request['capo'];
+            $cancion->comentario = $request['comentario'];
+            $cancion->var = $request['var'];
+            $cancion->artista_id = $request['artista_id'];
+            $cancion->genero_id = $request['genero_id'];
             $cancion->tonalidade_id = $request['tonalidade_id'];
-            $cancion->privada  = $request['privada'] ?? 0;
+            $cancion->privada = $request['privada'] ?? 0;
             //$cancion->user_id       = $request['user_id'];
-            $cancion->user_id = 1;
+            $cancion->user_id = auth::id();
             $cancion->save();
             foreach ($request['lineas'] as $linea) {
                 $letra = new Letra();
@@ -203,9 +203,9 @@ class CancioneController extends Controller
     {
         try {
             $can = new Cancione();
-            $can->titulo =  $cancion->titulo;
+            $can->titulo = $cancion->titulo;
             $can->metrica = $request['metrica'];
-            $can->capo =    $request['capo'] ?? 0;
+            $can->capo = $request['capo'] ?? 0;
             $can->comentario = $request['comentario'] ?? '';
             $can->var = true; // Marca como una variación
             $can->cancion_original_id = $cancion->id; // Relaciona con la canción original
@@ -332,7 +332,7 @@ class CancioneController extends Controller
     {
         try {
 
-            $canciones = Cancione::where('publicada', '==', '0')->with('artista', 'user', 'genero')->get();
+            $canciones = Cancione::where('publicada', '==', '0')->where('privada', '==', '0')->with('artista', 'user', 'genero')->get();
             if ($canciones == null) {
                 return response()->json(['message' => 'No hay canciones por revisar'], 404);
             }
@@ -386,7 +386,7 @@ class CancioneController extends Controller
     public function getNrevisables()
     {
         try {
-            $canciones = Cancione::where('publicada', '==', '0')->with('artista', 'user', 'genero')->get();
+            $canciones = Cancione::where('publicada', '==', '0')->where('privada', false)->with('artista', 'user', 'genero')->get();
             if ($canciones == null) {
                 return response()->json(['message' => 'No hay canciones por revisar'], 404);
             }
@@ -435,5 +435,28 @@ class CancioneController extends Controller
                 'limit' => $limit
             ]
         ], 200);
+    }
+    public function getLandingData()
+    {
+        try {
+            $top5 = Cancione::with('artista', 'user', 'genero')
+            ->where('privada', 0)
+            ->where('publicada', true)
+            ->orderBy('rating', 'desc')
+            ->take(5)
+            ->get();
+        
+        $nuevas = Cancione::with('artista', 'user', 'genero')
+            ->where('privada', 0)
+            ->where('publicada', true)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();   return response()->json([
+                'top5' => $top5,
+                'nuevas' => $nuevas
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
+        }
     }
 }

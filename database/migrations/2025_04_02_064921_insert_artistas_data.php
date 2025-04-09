@@ -14,6 +14,7 @@ return new class extends Migration
     {
         DB::statement("INSERT INTO artistas (id, nombre) VALUES
 -- Rock Clásico / Rock Alternativo
+(1, 'The Beatles'),
 (2, 'The Rolling Stones'),
 (3, 'Led Zeppelin'),
 (4, 'Pink Floyd'),
