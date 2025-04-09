@@ -14,7 +14,7 @@ class UserController extends Controller
     {
         try {
             $cancion = Cancione::findOrFail($id);
-            $user = User::findOrFail(1);
+            $user = Auth::user();
             $user->favoritos()->attach($cancion);
             return response()->json(['message' => 'Canción añadida a favoritos'], 200);
         } catch (\Exception $e) {
@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         try {
             $cancion = Cancione::findOrFail($id);
-            $user = User::findOrFail(1);
+            $user = Auth::user();
             $user->favoritos()->detach($cancion);
             return response()->json(['message' => 'Canción eliminada de favoritos'], 200);
         } catch (\Exception $e) {
@@ -35,7 +35,7 @@ class UserController extends Controller
     public function verificarFavorito($id)
     {
         try {
-            $user = User::findOrFail(1); // Aquí obtienes al usuario. En producción, sería el usuario autenticado.
+            $user = Auth::user(); // Aquí obtienes al usuario. En producción, sería el usuario autenticado.
             $favorito = $user->favoritos()->where('cancione_id', $id)->exists();
             return response()->json(['esFavorito' => $favorito], 200);
         } catch (\Exception $e) {
@@ -78,7 +78,7 @@ class UserController extends Controller
     {
         try {
             $cancion = Cancione::findOrFail($id);
-            $user = User::findOrFail(1);
+            $user = Auth::user();
             $user->guardados()->attach($cancion);
             return response()->json(['message' => 'Canción añadida a guardados'], 200);
         } catch (\Exception $e) {
@@ -99,7 +99,7 @@ class UserController extends Controller
     {
         try {
             $cancion = Cancione::findOrFail($id);
-            $user = User::findOrFail(1);
+            $user = Auth::user();
             $user->guardados()->detach($cancion);
             return response()->json(['message' => 'Canción eliminada de guardados'], 200);
         } catch (\Exception $e) {
@@ -118,7 +118,7 @@ class UserController extends Controller
     public function listarGuardados()
     {
         try {
-            $user = User::find(1);
+            $user = Auth::User();
             $guardados = $user->guardados;
             $canciones = Cancione::join('generos', 'canciones.genero_id', '=', 'generos.id')
                 ->join('tonalidades', 'canciones.tonalidade_id', '=', 'tonalidades.id')
