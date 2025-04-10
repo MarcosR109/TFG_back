@@ -61,7 +61,7 @@ class CancioneController extends Controller
             $canciones = Cancione::join('generos', 'canciones.genero_id', '=', 'generos.id')
                 ->join('tonalidades', 'canciones.tonalidade_id', '=', 'tonalidades.id')
                 ->join('artistas', 'canciones.artista_id', '=', 'artistas.id')
-                ->select('canciones.titulo', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista', )->where('canciones.privada', 0)
+                ->select('canciones.titulo', 'generos.nombre as genero', 'tonalidades.nombre as tonalidad', 'artistas.nombre as artista',)->where('canciones.privada', 0)
                 ->distinct()
                 ->get();
             return response()->json(['message' => 'Canciones obtenidas', 'canciones' => $canciones], 200);
@@ -440,18 +440,19 @@ class CancioneController extends Controller
     {
         try {
             $top5 = Cancione::with('artista', 'user', 'genero')
-            ->where('privada', 0)
-            ->where('publicada', true)
-            ->orderBy('rating', 'desc')
-            ->take(5)
-            ->get();
-        
-        $nuevas = Cancione::with('artista', 'user', 'genero')
-            ->where('privada', 0)
-            ->where('publicada', true)
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();   return response()->json([
+                ->where('privada', 0)
+                ->where('publicada', true)
+                ->orderBy('rating', 'desc')
+                ->take(5)
+                ->get();
+
+            $nuevas = Cancione::with('artista', 'user', 'genero')
+                ->where('privada', 0)
+                ->where('publicada', true)
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get();
+            return response()->json([
                 'top5' => $top5,
                 'nuevas' => $nuevas
             ], 200);
