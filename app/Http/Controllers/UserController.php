@@ -7,6 +7,7 @@ use App\Models\Cancione;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 class UserController extends Controller
 {
 
@@ -35,9 +36,16 @@ class UserController extends Controller
     public function verificarFavorito($id)
     {
         try {
-            $user = Auth::user(); // Aquí obtienes al usuario. En producción, sería el usuario autenticado.
-            $favorito = $user->favoritos()->where('cancione_id', $id)->exists();
-            return response()->json(['esFavorito' => $favorito], 200);
+            $user = Auth::user();
+            $debug = $user->favoritos()->get();
+            $favorito = false;
+            foreach ($debug as $cancion) {
+                if ($cancion->id == $id) {
+                    $favorito = true;
+                    break;
+                }
+            };
+            return response()->json(['esFavorito' => $favorito,], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al verificar favoritos', 'debug' => $e->getMessage()], 500);
         }
@@ -46,10 +54,10 @@ class UserController extends Controller
     {
         try {
             $user = Auth::user();
+            $debug = $user->favoritos()->get();
             $cancionesFav = $user->favoritos()->with('genero', 'tonalidade', 'artista')->get();
             $cancionesPropias = $user->canciones()->with('genero', 'tonalidade', 'artista')->get();
-        
-            return response()->json(['message' => 'Favoritos obtenidos', 'cancionesfav' => $cancionesFav, 'cancionespro' => $cancionesPropias, 'DEBUG' => 'listarfav'], 200);
+            return response()->json(['message' => 'Favoritos obtenidos', 'cancionesfav' => $cancionesFav, 'cancionespro' => $cancionesPropias, 'DEBUG' => $debug], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener los favoritos', 'error' => $e->getMessage()], 400);
         }
