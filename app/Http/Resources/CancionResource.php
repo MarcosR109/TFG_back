@@ -31,6 +31,7 @@ class CancionResource extends JsonResource
             'genero'     => $this->genero?->nombre,
             'tonalidad'  => $this->tonalidade?->nombre,
             'rating'    => $this->rating,
+            'privada'=> $this->privada,
             'lineas' => $this->letras->map(fn($letra) => [
                 'n_linea' => $letra->n_linea,
                 'texto'   => $letra->texto,

@@ -88,7 +88,7 @@ class CancioneController extends Controller
     public function show($id)
     {
         try {
-            $cancion = Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user'])->where('privada', 0)->find($id);
+            $cancion = Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user'])->find($id);
             if ($cancion == null) {
                 return response()->json(['message' => 'Canción no encontrada', 'DEBUG' => 'show'], 404);
             }
