@@ -45,7 +45,7 @@ class UserController extends Controller
                     break;
                 }
             };
-            return response()->json(['esFavorito' => $favorito,], 200);
+            return response()->json(['esFavorito' => $favorito], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al verificar favoritos', 'debug' => $e->getMessage()], 500);
         }

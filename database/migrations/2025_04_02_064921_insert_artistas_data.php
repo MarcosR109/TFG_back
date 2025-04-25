@@ -13,7 +13,6 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement("INSERT INTO artistas (id, nombre) VALUES
--- Rock Clásico / Rock Alternativo
 (1, 'The Beatles'),
 (2, 'The Rolling Stones'),
 (3, 'Led Zeppelin'),
@@ -46,8 +45,6 @@ return new class extends Migration
 (30, 'Soundgarden'),
 (31, 'Alice In Chains'),
 (32, 'Stone Temple Pilots'),
-
--- Metal / Hard Rock
 (33, 'Metallica'),
 (34, 'Iron Maiden'),
 (35, 'Black Sabbath'),
@@ -63,8 +60,6 @@ return new class extends Migration
 (45, 'Mötley Crüe'),
 (46, 'Barón Rojo'),
 (47, 'Obús'),
-
--- Pop Internacional
 (48, 'Michael Jackson'),
 (49, 'Madonna'),
 (50, 'Prince'),
@@ -93,8 +88,6 @@ return new class extends Migration
 (73, 'Olivia Rodrigo'),
 (74, 'Lana Del Rey'),
 (75, 'ABBA'),
-
--- Hip-Hop / Rap
 (76, 'Eminem'),
 (77, 'Kanye West'),
 (78, 'Kase.O'),
@@ -111,8 +104,6 @@ return new class extends Migration
 (89, 'Nicki Minaj'),
 (90, 'Doja Cat'),
 (91, 'SZA'),
-
--- Rock/Pop Español
 (92, 'Héroes del Silencio'),
 (93, 'Extremoduro'),
 (94, 'Platero y Tú'),
@@ -133,8 +124,6 @@ return new class extends Migration
 (109, 'Miguel Ríos'),
 (110, 'Robe'),
 (111, 'Iván Ferreiro'),
-
--- Indie/Alternativo Español
 (112, 'Vetusta Morla'),
 (113, 'Izal'),
 (114, 'Love of Lesbian'),
@@ -152,8 +141,6 @@ return new class extends Migration
 (126, 'Silvana Estrada'),
 (127, 'Sidonie'),
 (128, 'Kiko Veneno'),
-
--- Reggaeton/Latino
 (129, 'Bad Bunny'),
 (130, 'J Balvin'),
 (131, 'Maluma'),
@@ -171,8 +158,6 @@ return new class extends Migration
 (143, 'Daddy Yankee'),
 (144, 'Rosalía'),
 (145, 'Nene Malo'),
-
--- Otros (Flamenco, Folk, Varios)
 (146, 'Paco de Lucía'),
 (147, 'Camela'),
 (148, 'Estopa'),
@@ -200,7 +185,14 @@ return new class extends Migration
 (170, 'The Clash'),
 (171, 'The Smiths'),
 (172, 'Yes'),
-(173, 'Genesis');
+(173, 'Genesis'),
+(174, 'Britney Spears'),
+(175, 'Adele'),
+(176, 'Bruno Mars'),
+(177, 'The Weeknd'),
+(178, 'Sia'),
+(179, '21 Pilots'),
+(180, 'Anónimo o Desconocido');
             ");
     }
 

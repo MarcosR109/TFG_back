@@ -49,7 +49,7 @@ BEGIN
         JOIN acordes a1 ON a1.id = l1.acorde_id
         JOIN acordes a2 ON a2.id = l2.acorde_id
         JOIN acordes a3 ON a3.id = l3.acorde_id
-        WHERE a1.id != 170 AND a2.id != 170 AND a3.id != 170
+        WHERE a1.id != 169 AND a2.id != 169 AND a3.id != 169
           AND a1.grado != 8 AND a2.grado != 8 AND a3.grado != 8
           AND a1.grado = p_previo
           AND a2.grado = p_actual
@@ -77,7 +77,7 @@ BEGIN
             JOIN acordes a1 ON a1.id = l1.acorde_id
             JOIN acordes a2 ON a2.id = l2.acorde_id
             JOIN acordes a3 ON a3.id = l3.acorde_id
-            WHERE a1.id != 170 AND a2.id != 170 AND a3.id != 170
+            WHERE a1.id != 169 AND a2.id != 169 AND a3.id != 169
               AND a1.grado != 8 AND a2.grado != 8 AND a3.grado != 8
               AND a1.grado = p_previo
               AND a2.grado = p_actual
@@ -117,7 +117,7 @@ BEGIN
                       AND l1.n_linea = l2.n_linea
         JOIN acordes a1 ON a1.id = l1.acorde_id
         JOIN acordes a2 ON a2.id = l2.acorde_id
-        WHERE a1.id != 170 AND a2.id != 170
+        WHERE a1.id != 169 AND a2.id != 169
           AND a1.grado != 8 AND a2.grado != 8
           AND a1.grado = p_actual
           AND l2.posicion_en_compas > l1.posicion_en_compas
@@ -139,7 +139,7 @@ BEGIN
                 2 AS search_priority
             FROM lineas l1
             JOIN acordes a1 ON a1.id = l1.acorde_id
-            WHERE a1.id != 170
+            WHERE a1.id != 169
               AND a1.grado != 8
               AND l1.n_linea > 1
               AND a1.grado != p_actual  -- Excluir el acorde actual
