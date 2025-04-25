@@ -377,7 +377,7 @@ class CancioneController extends Controller
                 $letra->cancione_id = $cancion->id;
                 $letra->save();
             }
-            return response()->json(['cancion' => CancionResource::make($cancion)], 200);
+            return response()->json(['cancion' => CancionResource::make($cancion), 'Publicada?', $cancion->publicada], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener la canción', 'error' => $e->getMessage()], 400);
         }
