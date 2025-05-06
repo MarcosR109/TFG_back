@@ -49,7 +49,6 @@ class CancioneController extends Controller
     public function index()
     {
         try {
-
             return CancionResource::collection(Cancione::with(['genero', 'letras', 'lineas', 'tonalidade', 'user',])->where('privada', 0)->get());
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener las canciones', 'error' => $e->getMessage()], 400);
@@ -112,6 +111,8 @@ class CancioneController extends Controller
             $cancion->genero_id = $request['genero_id'];
             $cancion->tonalidade_id = $request['tonalidade_id'];
             $cancion->user_id = $request['user_id'];
+            $cancion->privada = $request['privada'];
+            $cancion->save();
             try {
                 $letras = $cancion->letras;
                 $lineas = $cancion->lineas;
@@ -250,7 +251,7 @@ class CancioneController extends Controller
             $variacion->comentario = $cancion->comentario;
             $variacion->var = true; // Marca como una variación
             $variacion->cancion_original_id = $cancion->id; // Relaciona con la canción original
-            $variacion->user_id = 2; // El ID del usuario que crea la variación
+            $variacion->user_id = auth::id(); // El ID del usuario que crea la variación
             $variacion->genero_id = $cancion->genero_id;
             $variacion->tonalidade_id = $cancion->tonalidade_id;
             $variacion->artista_id = $cancion->artista_id;
@@ -269,7 +270,7 @@ class CancioneController extends Controller
             if ($cancion == null) {
                 return response()->json(['message' => 'Canción no encontrada'], 404);
             }
-            $cancion->user_id = 1;
+            $cancion->user_id = auth::id();
             $cancion->titulo = $request->input("titulo");
             $cancion->metrica = $request->input("metrica");
             $cancion->capo = $request->input("capo");
@@ -278,6 +279,8 @@ class CancioneController extends Controller
             $cancion->artista_id = $request->input("artista_id");
             $cancion->genero_id = $request->input("genero_id");
             $cancion->tonalidade_id = $request->input("tonalidade_id");
+            $cancion->privada = $request->input("privada");
+
             $cancion->lineas()->delete();
             $cancion->letras()->delete();
             $cancion->save();
@@ -348,7 +351,7 @@ class CancioneController extends Controller
             if ($cancion == null) {
                 return response()->json(['message' => 'Canción no encontrada'], 404);
             }
-            $cancion->user_id = 1;
+            $cancion->user_id = auth::id();
             $cancion->titulo = $request->input("titulo");
             $cancion->metrica = $request->input("metrica");
             $cancion->capo = $request->input("capo");
